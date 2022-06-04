@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <title>Scrap Mechanic Circuit Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+</head>
+
+<body>
+    <style>
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: none
+        }
+
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .toolbar {
+            position: absolute;
+            text-align: center;
+            bottom: 0px;
+            width: 100%;
+            background-color: #232323;
+            display: flex;
+        }
+
+        .first-button {
+            color: #d5d5d5;
+            background-color: #444444;
+        }
+
+        button {
+            padding: 4px 10px;
+            background-color: #2d2d2d;
+            font-size: large;
+            color: #a0a0a0;
+            border: 0px;
+            margin: 5px 2px;
+            border-radius: 4px;
+        }
+
+        #chipName {
+            width: 100%;
+            position: absolute;
+            height: 100px;
+            background-color: transparent;
+            border: 0px;
+            color: white;
+            padding: 30px;
+            font-size: 3em;
+        }
+
+        #chipName:focus {
+            outline: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+    <script src="lib/pin.js"></script>
+    <script src="lib/chip.js"></script>
+
+    <script src="lib/andGate.js"></script>
+    <script src="lib/orGate.js"></script>
+    <script src="lib/xorGate.js"></script>
+    <script src="lib/nandGate.js"></script>
+    <script src="lib/norGate.js"></script>
+    <script src="lib/xnorGate.js"></script>
+
+    <script src="editor/chip.js"></script>
+    <script src="editor/main.js"></script>
+
+    <input id="chipName" placeholder="Chip Name" />
+
+    <div class="toolbar">
+        <button class="first-button" onclick="alert('not implemented')">+</button>
+        <button onclick="chips.push(new ChipRenderer(new AndGate()))">AND</button>
+        <button onclick="chips.push(new ChipRenderer(new OrGate()))">OR</button>
+        <button onclick="chips.push(new ChipRenderer(new XorGate()))">XOR</button>
+        <button onclick="chips.push(new ChipRenderer(new NandGate()))">NAND</button>
+        <button onclick="chips.push(new ChipRenderer(new NorGate()))">NOR</button>
+        <button onclick="chips.push(new ChipRenderer(new XnorGate()))">XNOR</button>
+    </div>
+</body>
+
+</html>
