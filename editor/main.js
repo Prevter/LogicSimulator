@@ -5,6 +5,8 @@ let isFirstPinGlobal = false;
 
 let editedChip = null;
 
+let toRemove = -1;
+
 const WIRE_COLOR = "#20252E";
 const WIRE_ENABLED_COLOR = "#EC2239";
 
@@ -48,11 +50,11 @@ function getEditedChipPinPos(index, output) {
 
     if (output) {
         var inputsHeight = editedChip.inputPins.length * 64;
-        y = height / 2 - inputsHeight / 2 + index * 64 + 60;
+        y = height / 2 - inputsHeight / 2 + index * 64 + 45;
     }
     else {
         var outputsHeight = editedChip.outputPins.length * 64;
-        y = height / 2 - outputsHeight / 2 + index * 64 + 60;
+        y = height / 2 - outputsHeight / 2 + index * 64 + 45;
     }
 
     return createVector(x, y);
@@ -66,7 +68,7 @@ function draw() {
     background(54);
     stroke("#464646");
     fill(50);
-    rect(30, 100, width - 60, height - 160);
+    rect(30, 70, width - 60, height - 130);
 
     var onlyChips = [];
     for (var i = 0; i < chips.length; i++) {
@@ -79,11 +81,56 @@ function draw() {
         onlyChips[i].update();
     }
 
+    if (toRemove != -1) {
+        chips.splice(toRemove, 1);
+        toRemove = -1;
+    }
+
     for (var i = chips.length - 1; i >= 0; i--) {
         var overPin = chips[i].getOverPin();
+        var overChip = chips[i].isOverChip();
+
+        if (overChip && toRemove == -1) {
+            // If delete key pressed, delete chip
+            if (keyIsDown(8) || keyIsDown(46)) {
+                // Remove all wires connected to this chip
+                for (var j = 0; j < chips[i].chip.inputPins.length; j++) {
+                    var pin = chips[i].chip.inputPins[j];
+
+                    for (var k = 0; k < pin.children.length; k++) {
+                        var child = pin.children[k];
+                        child.parents.remove(pin);
+                    }
+                    pin.children = [];
+                    for (var k = 0; k < pin.parents.length; k++) {
+                        var parent = pin.parents[k];
+                        parent.children.remove(pin);
+                    }
+                    pin.parents = [];
+                }
+
+                for (var j = 0; j < chips[i].chip.outputPins.length; j++) {
+                    var pin = chips[i].chip.outputPins[j];
+
+                    for (var k = 0; k < pin.children.length; k++) {
+                        var child = pin.children[k];
+                        child.parents.remove(pin);
+                    }
+                    pin.children = [];
+                    for (var k = 0; k < pin.parents.length; k++) {
+                        var parent = pin.parents[k];
+                        parent.children.remove(pin);
+                    }
+                    pin.parents = [];
+                }
+
+                toRemove = i;
+            }
+        }
+
 
         // If the mouse is over a chip, drag it
-        if (!draggedChip && !overPin && !firstPin && chips[i].isOverChip()) {
+        if (!draggedChip && !overPin && !firstPin && overChip) {
             if (mouseIsPressed) {
                 draggedChip = chips[i];
             }
@@ -96,10 +143,11 @@ function draw() {
         } // If the mouse stopped over another pin, connect them
         else if (overPin && firstPin) {
             if (!mouseIsPressed) {
-                if (firstPin.parents.indexOf(overPin) == -1 &&
-                    overPin.parents.indexOf(firstPin) == -1)
+                if (firstPin.chip != chips[i].chip &&
+                    firstPin.parents.indexOf(overPin) == -1 &&
+                    overPin.parents.indexOf(firstPin) == -1) {
                     makeConnection(firstPin, overPin);
-                else {
+                } else {
                     removeConnection(firstPin, overPin);
                 }
             }
