@@ -8,6 +8,10 @@ let editedChip = null;
 const WIRE_COLOR = "#20252E";
 const WIRE_ENABLED_COLOR = "#EC2239";
 
+function renameCurrentChip(name) {
+    editedChip.name = name;
+}
+
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
     editedChip = new Chip();
@@ -17,7 +21,7 @@ function setup() {
     textStyle(BOLD);
     textSize(14);
 
-
+    // TODO: make adding new pins in UI
     editedChip.inputPins.push(new Pin(true));
     editedChip.inputPins[0].name = "A";
     editedChip.inputPins[0].chip = editedChip;
@@ -64,8 +68,15 @@ function draw() {
     fill(50);
     rect(30, 100, width - 60, height - 160);
 
+    var onlyChips = [];
+    for (var i = 0; i < chips.length; i++) {
+        onlyChips.push(chips[i].chip);
+    }
+    markAllLoops(onlyChips);
+
     for (var i = 0; i < chips.length; i++) {
         chips[i].show();
+        onlyChips[i].update();
     }
 
     for (var i = chips.length - 1; i >= 0; i--) {
@@ -75,7 +86,6 @@ function draw() {
         if (!draggedChip && !overPin && !firstPin && chips[i].isOverChip()) {
             if (mouseIsPressed) {
                 draggedChip = chips[i];
-                //moveToEnd(i);
             }
         } // If the mouse is over a pin, start wiring 
         else if (overPin && !firstPin && !draggedChip) {
@@ -138,16 +148,6 @@ function draw() {
         line(mouseX, mouseY, pos.x, pos.y);
         strokeWeight(1);
     }
-
-    for (var i = 0; i < editedChip.inputPins.length; i++) {
-        var pin = editedChip.inputPins[i];
-        for (var j = 0; j < pin.children.length; j++) {
-            var child = pin.children[j];
-            if (child.chip != editedChip)
-                child.chip.update();
-        }
-    }
-
 
     // Draw edited chip lines
     for (var i = 0; i < editedChip.inputPins.length; i++) {

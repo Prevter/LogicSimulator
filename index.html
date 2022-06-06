@@ -65,6 +65,7 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
     <script src="lib/pin.js"></script>
     <script src="lib/chip.js"></script>
+    <script src="lib/loopDetector.js"></script>
 
     <script src="lib/andGate.js"></script>
     <script src="lib/orGate.js"></script>
@@ -76,7 +77,7 @@
     <script src="editor/chip.js"></script>
     <script src="editor/main.js"></script>
 
-    <input id="chipName" placeholder="Chip Name" />
+    <input id="chipName" placeholder="Chip Name" onchange="renameCurrentChip(this.value)" value="Untitled"/>
 
     <div class="toolbar">
         <button class="first-button" onclick="alert('not implemented')">+</button>
